@@ -1,7 +1,10 @@
 //global variables go here:
 
 var clickedArray = []; //used to keep track of the clicked cells.
-
+//for time stuff
+var interval;        //to stop the timer using a clearInterval() method call
+var started = false; //only start the timer once
+var time = 0;        //to keep track of the elapsed time
 
 //execute functions here:
 setUp();
@@ -23,6 +26,15 @@ function reveal(cell){
     cell.clicked = true;
 }
 
+function startTimer(){
+    if (started == false){
+        interval = setInterval(function(){
+            time++;
+            document.getElementById("timer").innerHTML = "Time Elapsed: " + time;
+        },1000)
+        started = true;
+    }
+}
 
 function setUp(){
     var grid = document.getElementsByTagName("td");
@@ -49,6 +61,7 @@ function setUp(){
         });
 
         cell.addEventListener('click',function(){
+            startTimer();
             //make the blue cells turn red and also reveal their hidden values when clicked
             if(this.clicked == false && this.completed == false){
                 clickedArray.push(this);
