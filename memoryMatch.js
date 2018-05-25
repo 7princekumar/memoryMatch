@@ -57,6 +57,19 @@ function setUp(){
     var grid = document.getElementsByTagName("td");
     var answers = randomAnswers();
 
+    //adding an event listener that handles "keydown" events
+    document.addEventListener('keydown', function(event){
+        if(event.key > 0 && event.key < 10 ){
+            grid[event.key - 1].click();
+        }
+
+    });
+
+    //adding an event listener that handles "click" events on the restart button
+    document.getElementById('restart').addEventListener('click', function(){
+        location.reload(); //reload the page.
+    });
+
     for(var i = 0; i < grid.length; i++){
         var cell = grid[i];
         cell.completed = false; //whether matched to it's matching pair
