@@ -6,6 +6,9 @@ var interval;        //to stop the timer using a clearInterval() method call
 var started = false; //only start the timer once
 var time = 0;        //to keep track of the elapsed time
 
+var ready = true; //indicates whether or not the application is able to handle click events
+var numCompleted = 0; //keeps track of the number of cells that have been completed
+
 //execute functions here:
 setUp();
 
@@ -20,12 +23,6 @@ function randomAnswers(){
     return answers;
 }
 
-function reveal(cell){
-    cell.style.backgroundColor = "red";
-    cell.innerHTML = cell.value;
-    cell.clicked = true;
-}
-
 function startTimer(){
     if (started == false){
         interval = setInterval(function(){
@@ -34,6 +31,26 @@ function startTimer(){
         },1000)
         started = true;
     }
+}
+
+function reveal(cell){
+    cell.style.backgroundColor = "red";
+    cell.innerHTML = cell.value;
+    cell.clicked = true;
+}
+
+function hide(cell){
+    //reverts red cells back to blue cells and also hides their hidden number
+    cell.style.backgroundColor = "blue";
+    cell.innerHTML = "";
+    cell.clicked = false; //so it can be clicked again in the future
+}
+
+
+function complete(cell){
+    numCompleted++;
+    cell.completed = true;
+    cell.style.backgroundColor = "purple";
 }
 
 function setUp(){
@@ -61,12 +78,55 @@ function setUp(){
         });
 
         cell.addEventListener('click',function(){
+            if(ready == false){ //make the application unable to handle click events when the ready attribute is set to false
+                return;
+            }
+
             startTimer();
             //make the blue cells turn red and also reveal their hidden values when clicked
             if(this.clicked == false && this.completed == false){
                 clickedArray.push(this);
                 reveal(this);
             }
+
+            if(clickedArray.length == 2){
+
+                if(clickedArray[0].value == clickedArray[1].value){
+                    //if a matching pair is found
+                    complete(clickedArray[0]);
+                    complete(clickedArray[1]);
+
+                    clickedArray = []; //empty the clickedArray again for new pairs
+
+                    if(numCompleted == 8){
+                        alert("You won in " + time + " seconds!");
+                        clearInterval(interval); //stop timer
+                    }
+                }
+                else{
+                    //if a matching pair is not found
+                    ready = false;
+                    document.getElementById("gridTable").style.border = "5px solid red";
+
+                    //The red border and the inability to handle click events will only last for 500 ms
+                    // because a setTimeout() will schedule a function to undo these actions
+                    setTimeout(function(){
+                        //after a 500ms delay
+                        hide(clickedArray[0]);
+                        hide(clickedArray[1]);
+
+                        clickedArray = [];
+
+                        ready = true;
+                        document.getElementById("gridTable").style.border = "2px solid black";
+
+                    },500);
+
+                }
+
+            }
         });
-    }
+
+        
+    }//for
 }
