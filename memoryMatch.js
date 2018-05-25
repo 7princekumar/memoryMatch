@@ -1,5 +1,7 @@
 //global variables go here:
 
+var clickedArray = []; //used to keep track of the clicked cells.
+
 
 //execute functions here:
 setUp();
@@ -14,6 +16,13 @@ function randomAnswers(){
     })
     return answers;
 }
+
+function reveal(cell){
+    cell.style.backgroundColor = "red";
+    cell.innerHTML = cell.value;
+    cell.clicked = true;
+}
+
 
 function setUp(){
     var grid = document.getElementsByTagName("td");
@@ -40,10 +49,11 @@ function setUp(){
         });
 
         cell.addEventListener('click',function(){
-
-
+            //make the blue cells turn red and also reveal their hidden values when clicked
+            if(this.clicked == false && this.completed == false){
+                clickedArray.push(this);
+                reveal(this);
+            }
         });
     }
-
-
 }
